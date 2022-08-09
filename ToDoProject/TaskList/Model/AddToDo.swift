@@ -20,9 +20,13 @@ enum Priorities: String, CaseIterable {
             default: return nil
         }
     }
-}
-
-struct IncomeTaxCardModel {
     
+    var priorityString: String {
+        switch self {
+            case .high: return "High"
+            case .normal: return "Normal"
+            case .low: return "Low"
+        }
+    }
 }
 

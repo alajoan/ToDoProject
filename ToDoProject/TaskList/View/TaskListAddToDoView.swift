@@ -1,5 +1,5 @@
 //
-//  AddToDoView.swift
+//  TaskListAddToDoView.swift
 //  ToDoProject
 //
 //  Created by Jonathan Alajoan Nascimento Rocha on 04/08/22.
@@ -7,18 +7,15 @@
 
 import SwiftUI
 
-struct AddToDoView: View {
+struct TaskListAddToDoView: View {
     
     //MARK: - Properties
-    
-    @Environment(\.presentationMode) var presentationMode
-    
     @State private var name: String = ""
     @State private var priority: Priorities = .normal
+    @StateObject var viewModel = TaskListMainViewModel()
+    @Environment(\.presentationMode) var presentationMode
     
     //MARK: - Body
-    
-    
     var body: some View {
         NavigationView {
             VStack {
@@ -32,18 +29,28 @@ struct AddToDoView: View {
                     .pickerStyle(SegmentedPickerStyle())
                     
                     Button(action: {
-                        print("Save a new todo item")
+                        viewModel.saveTask(name: self.name, priority: self.priority)
+                        if viewModel.shouldShowAlert == false {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                        
                     }) {
                         Text("Save")
                     }
-
+                    .alert(isPresented:$viewModel.shouldShowAlert) {
+                        Alert(
+                            title: Text("Erro ao cadastrar task"),
+                            message: Text("Sua task deve ter no minimo 2 palavras de titulo"),
+                            dismissButton: .default(Text("Ok"))
+                        )
+                    }
                 }
                 Spacer()
             }
-            .navigationBarTitle("New To do")
+            .navigationBarTitle("New Task To do")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button { 
+                    Button {
                         self.presentationMode.wrappedValue.dismiss()
                     } label: {
                         Image(systemName: "xmark")
@@ -55,8 +62,8 @@ struct AddToDoView: View {
 }
 
 //MARK: - Preview
-struct AddToDoView_Previews: PreviewProvider {
+struct TaskListAddToDoView_Previews: PreviewProvider {
     static var previews: some View {
-        AddToDoView()
+        TaskListAddToDoView()
     }
 }
